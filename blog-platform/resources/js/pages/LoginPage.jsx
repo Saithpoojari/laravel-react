@@ -1,144 +1,165 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const LoginForm = () => {
+function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+
+  // Inline styles (reusing previous aesthetic design with twilight background)
+  const styles = {
+    container: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      backgroundImage: `url('/images/twilight-background.jpg')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      padding: '20px',
+    },
+    form: {
+      background: 'rgba(255, 255, 255, 0.9)',
+      padding: '30px',
+      borderRadius: '10px',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+      width: '100%',
+      maxWidth: '400px',
+      animation: 'fadeIn 0.5s ease-in',
+    },
+    inputGroup: {
+      marginBottom: '15px',
+    },
+    label: {
+      display: 'block',
+      marginBottom: '5px',
+      fontFamily: 'Arial, sans-serif',
+      color: '#333',
+      fontSize: '16px',
+    },
+    input: {
+      width: '100%',
+      padding: '10px',
+      border: '1px solid #ddd',
+      borderRadius: '5px',
+      fontSize: '14px',
+      transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+    },
+    inputFocus: {
+      borderColor: '#007bff',
+      boxShadow: '0 0 5px rgba(0, 123, 255, 0.5)',
+    },
+    button: {
+      width: '100%',
+      padding: '10px',
+      background: '#007bff',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '5px',
+      fontSize: '16px',
+      cursor: 'pointer',
+      transition: 'background 0.3s ease',
+    },
+    buttonHover: {
+      background: '#0056b3',
+    },
+    error: {
+      color: 'red',
+      marginTop: '10px',
+      fontSize: '14px',
+    },
+  };
+
+  // Animation keyframes
+  const animationStyles = `
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `;
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError(null);
+
+    fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Login failed');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Login successful:', data);
+        // Redirect to home page
+        window.location.href = '/';
+      })
+      .catch((error) => {
+        console.error('Error logging in:', error);
+        setError('Invalid credentials or server error');
+      });
+  };
+
   return (
-    <>
-      <style>
-        {`
-        *,:before,:after {
-          padding: 0;
-          margin: 0;
-          box-sizing: border-box;
-        }
-        body {
-          background-color: #080710;
-        }
-        .background {
-          width: 430px;
-          height: 520px;
-          position: absolute;
-          transform: translate(-50%, -50%);
-          left: 50%;
-          top: 50%;
-        }
-        .background .shape {
-          height: 200px;
-          width: 200px;
-          position: absolute;
-          border-radius: 50%;
-        }
-        .shape:first-child {
-          background: linear-gradient(#1845ad, #23a2f6);
-          left: -80px;
-          top: -80px;
-        }
-        .shape:last-child {
-          background: linear-gradient(to right, #ff512f, #f09819);
-          right: -30px;
-          bottom: -80px;
-        }
-        .login-form {
-          height: 520px;
-          width: 400px;
-          background-color: rgba(255,255,255,0.13);
-          position: absolute;
-          transform: translate(-50%, -50%);
-          top: 50%;
-          left: 50%;
-          border-radius: 10px;
-          backdrop-filter: blur(10px);
-          border: 2px solid rgba(255,255,255,0.1);
-          box-shadow: 0 0 40px rgba(8,7,16,0.6);
-          padding: 50px 35px;
-        }
-        .login-form * {
-          font-family: 'Poppins', sans-serif;
-          color: #ffffff;
-          letter-spacing: 0.5px;
-          outline: none;
-          border: none;
-        }
-        .login-form h3 {
-          font-size: 32px;
-          font-weight: 500;
-          line-height: 42px;
-          text-align: center;
-        }
-        .login-form label {
-          display: block;
-          margin-top: 30px;
-          font-size: 16px;
-          font-weight: 500;
-        }
-        .login-form input {
-          display: block;
-          height: 50px;
-          width: 100%;
-          background-color: rgba(255,255,255,0.07);
-          border-radius: 3px;
-          padding: 0 10px;
-          margin-top: 8px;
-          font-size: 14px;
-          font-weight: 300;
-        }
-        .login-form ::placeholder {
-          color: #e5e5e5;
-        }
-        .login-form button {
-          margin-top: 50px;
-          width: 100%;
-          background-color: #ffffff;
-          color: #080710;
-          padding: 15px 0;
-          font-size: 18px;
-          font-weight: 600;
-          border-radius: 5px;
-          cursor: pointer;
-        }
-        .social {
-          margin-top: 30px;
-          display: flex;
-        }
-        .social div {
-          background: red;
-          width: 150px;
-          border-radius: 3px;
-          padding: 5px 10px 10px 5px;
-          background-color: rgba(255,255,255,0.27);
-          color: #eaf0fb;
-          text-align: center;
-        }
-        .social div:hover {
-          background-color: rgba(255,255,255,0.47);
-        }
-        .social .fb {
-          margin-left: 25px;
-        }
-        .social i {
-          margin-right: 4px;
-        }
-        `}
-      </style>
-
-      <div className="background">
-        {/* <div className="shape"></div>
-        <div className="shape"></div> */}
+    <div style={styles.container}>
+      <style>{animationStyles}</style>
+      <div style={styles.form}>
+        <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#333' }}>Login</h1>
+        <form onSubmit={handleSubmit}>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Email:</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              style={styles.input}
+              onFocus={(e) => (e.target.style = { ...styles.input, ...styles.inputFocus })}
+              onBlur={(e) => (e.target.style = styles.input)}
+              required
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              style={styles.input}
+              onFocus={(e) => (e.target.style = { ...styles.input, ...styles.inputFocus })}
+              onBlur={(e) => (e.target.style = styles.input)}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            style={styles.button}
+            onMouseEnter={(e) => (e.target.style = { ...styles.button, ...styles.buttonHover })}
+            onMouseLeave={(e) => (e.target.style = styles.button)}
+          >
+            Login
+          </button>
+          {error && <p style={styles.error}>{error}</p>}
+        </form>
       </div>
-      <form className="login-form">
-        <h3>Login Here</h3>
-
-        <label htmlFor="username">Username</label>
-        <input type="text" placeholder="Email or Phone" id="username" />
-
-        <label htmlFor="password">Password</label>
-        <input type="password" placeholder="Password" id="password" />
-
-        <button type="submit">Log In</button>
-
-
-      </form>
-    </>
+    </div>
   );
-};
+}
 
-export default LoginForm;
+export default Login;
