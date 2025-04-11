@@ -1,0 +1,12 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background: url('../components/gray-asphalt-texture-empty-background-ready-place-your-concept_1194-19436.avif');
+    background-position: center;
+    /* background-repeat:no-repeat ;
+    object-fit: cover;
+    object-position: center; */
+}

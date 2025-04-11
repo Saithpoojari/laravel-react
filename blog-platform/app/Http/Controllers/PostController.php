@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PostController extends Controller {
     public function index() {
@@ -13,6 +15,9 @@ class PostController extends Controller {
 
     public function create() {
         return view('create');
+    }
+    public function register() {
+        return view('register');
     }
 
     public function store(Request $request) {
@@ -28,5 +33,20 @@ class PostController extends Controller {
         ]);
 
         return response()->json(['message' => 'Post created successfully', 'post' => $post], 201);
+    }
+
+    public function storeUser(request  $request){
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password), 
+        ]);
+        auth()->login($user);
+
+        // Return a JSON response
+        return response()->json([
+            'message' => 'User registered successfully',
+            'user' => $user
+        ], 201);
     }
 }

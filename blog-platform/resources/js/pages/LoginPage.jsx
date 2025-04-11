@@ -5,7 +5,6 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
-  // Inline styles (reusing previous aesthetic design with twilight background)
   const styles = {
     container: {
       display: 'flex',
@@ -18,73 +17,75 @@ function Login() {
       backgroundRepeat: 'no-repeat',
       padding: '20px',
     },
-    form: {
-      background: 'rgba(255, 255, 255, 0.9)',
-      padding: '30px',
-      borderRadius: '10px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    formContainer: {
+    
+      padding: '40px',
+      borderRadius: '15px',
+      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)',
       width: '100%',
-      maxWidth: '400px',
-      animation: 'fadeIn 0.5s ease-in',
+      maxWidth: '450px',
+    },
+    title: {
+      textAlign: 'center',
+      marginBottom: '30px',
+      color: 'white',
+      fontFamily: 'Montserrat',
+      fontSize: '2em',
+      fontWeight: 'bold',
     },
     inputGroup: {
-      marginBottom: '15px',
+      marginBottom: '20px',
     },
     label: {
       display: 'block',
-      marginBottom: '5px',
+      marginBottom: '8px',
       fontFamily: 'Arial, sans-serif',
       color: '#333',
       fontSize: '16px',
+      fontWeight: '500',
     },
     input: {
       width: '100%',
-      padding: '10px',
-      border: '1px solid #ddd',
-      borderRadius: '5px',
-      fontSize: '14px',
-      transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
-    },
-    inputFocus: {
-      borderColor: '#007bff',
-      boxShadow: '0 0 5px rgba(0, 123, 255, 0.5)',
+      padding: '12px',
+      border: '1px solid #ccc',
+      borderRadius: '6px',
+      fontSize: '15px',
+      boxSizing: 'border-box',
     },
     button: {
       width: '100%',
-      padding: '10px',
+      padding: '12px',
       background: '#007bff',
       color: '#fff',
       border: 'none',
-      borderRadius: '5px',
+      borderRadius: '6px',
       fontSize: '16px',
+      fontWeight: '500',
       cursor: 'pointer',
-      transition: 'background 0.3s ease',
     },
-    buttonHover: {
-      background: '#0056b3',
+    registerButton: {
+      display: 'block',
+      width: '100%',
+      padding: '12px',
+      marginTop: '15px',
+      background: 'transparent',
+      color: '#007bff',
+      border: '1px solid #007bff',
+      borderRadius: '6px',
+      fontSize: '16px',
+      fontWeight: '500',
+      textAlign: 'center',
+      textDecoration: 'none',
+      cursor: 'pointer',
     },
     error: {
-      color: 'red',
-      marginTop: '10px',
+      color: '#d9534f',
+      marginTop: '15px',
       fontSize: '14px',
+      textAlign: 'center',
     },
   };
 
-  // Animation keyframes
-  const animationStyles = `
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  `;
-
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     setError(null);
@@ -100,26 +101,26 @@ function Login() {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Login failed');
+          return response.json().then((data) => {
+            throw new Error(data.message || 'Login failed');
+          });
         }
         return response.json();
       })
       .then((data) => {
         console.log('Login successful:', data);
-        // Redirect to home page
         window.location.href = '/';
       })
       .catch((error) => {
         console.error('Error logging in:', error);
-        setError('Invalid credentials or server error');
+        setError(error.message); // Use backend error message
       });
   };
 
   return (
     <div style={styles.container}>
-      <style>{animationStyles}</style>
-      <div style={styles.form}>
-        <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#333' }}>Login</h1>
+      <div style={styles.formContainer}>
+        <h1 style={styles.title}>Login</h1>
         <form onSubmit={handleSubmit}>
           <div style={styles.inputGroup}>
             <label style={styles.label}>Email:</label>
@@ -129,8 +130,6 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               style={styles.input}
-              onFocus={(e) => (e.target.style = { ...styles.input, ...styles.inputFocus })}
-              onBlur={(e) => (e.target.style = styles.input)}
               required
             />
           </div>
@@ -142,19 +141,15 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               style={styles.input}
-              onFocus={(e) => (e.target.style = { ...styles.input, ...styles.inputFocus })}
-              onBlur={(e) => (e.target.style = styles.input)}
               required
             />
           </div>
-          <button
-            type="submit"
-            style={styles.button}
-            onMouseEnter={(e) => (e.target.style = { ...styles.button, ...styles.buttonHover })}
-            onMouseLeave={(e) => (e.target.style = styles.button)}
-          >
+          <button type="submit" style={styles.button}>
             Login
           </button>
+          <a href="/register" style={styles.registerButton}>
+            Register
+          </a>
           {error && <p style={styles.error}>{error}</p>}
         </form>
       </div>

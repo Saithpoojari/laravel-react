@@ -4,6 +4,7 @@ import Navbar from './components/NavBar';
 import Home from './pages/Home';
 import CreatePost from './pages/CreatePost';
 import Login from './pages/LoginPage'
+import Register from './pages/Register';
 
 console.log('React loaded:', React);
 
@@ -13,7 +14,7 @@ function App() {
 
   return (
     <div>
-    {(page === 'home' || page === 'create') && <Navbar />}
+    {(page === 'home' || page === 'create' ) && <Navbar />}
   
     {page === 'home' ? (
       <Home />
@@ -21,9 +22,12 @@ function App() {
       <CreatePost />
     ) : page === 'login' ? (
       <Login />
+    ) :page === 'register'?(
+        <Register/>
     ) : (
       <Home />
     )}
+    {/* <Register/> */}
   </div>
   
   );
