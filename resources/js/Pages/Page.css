@@ -1,0 +1,72 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    /* background: url('../Pages/gray-asphalt-texture-empty-background-ready-place-your-concept_1194-19436.avif');
+    background-position: center; */
+    /* background-repeat:no-repeat ;
+    object-fit: cover;
+    object-position: center; */
+    background: linear-gradient(to bottom, black, #00303b, #000);
+    /* background-repeat: no-repeat; */
+}
+.show{
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 100px auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap:20px;
+    justify-content: center;
+
+
+}
+.show:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  }
+  .para
+  {
+    font-weight: 600;
+
+  }
+  .Blogtitle{
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .createsec{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    max-width: 1200px;
+    margin : 0 auto 70px auto;
+    padding: 10px 50px;
+    background: transparent;
+    /* backdrop-filter: blur(4px); */
+    border-radius: 50px;
+    border: 1px solid white;
+  }
+  .createsec:hover{
+    /* background: #0056b3; */
+    transition: all 0.3s;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.34);
+
+  }
+  .createsec h2{
+    font-size: 20px;
+    font-weight: 800;
+  }
+  .tags{
+    display: flex;
+    align-items: center;
+    gap: 10px
+  }
