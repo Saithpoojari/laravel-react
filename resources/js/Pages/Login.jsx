@@ -53,7 +53,7 @@ function Login() {
     button: {
       width: '100%',
       padding: '10px',
-      background: '#007bff',
+      background: '#0084a1',
       color: '#fff',
       border: 'none',
       borderRadius: '5px',
@@ -157,7 +157,7 @@ function Login() {
             />
           </div>
           <button type="submit" style={styles.button} disabled={processing}>
-            Login
+            Login 
           </button>
           <Link href="/register" style={styles.link} className="link">
             Don’t have an account? Register here

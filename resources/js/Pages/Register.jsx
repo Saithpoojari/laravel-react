@@ -55,7 +55,7 @@ function Register() {
     button: {
       width: '100%',
       padding: '10px',
-      background: '#007bff',
+      background: '#0084a1',
       color: '#fff',
       border: 'none',
       borderRadius: '5px',

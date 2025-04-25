@@ -1,40 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from '@inertiajs/react';
 
-function CreatePost() {
-  const [title, setTitle] = useState('');
-  const [topic, setTopic] = useState('');
-  const [body, setBody] = useState(''); // Changed from content to body
-  const [error, setError] = useState(null);
+function CreatePost({ onPostCreated }) {
+  const { data, setData, post, processing, errors } = useForm({
+    title: '',
+    topic: '',
+    body: '',
+    image: null,
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError(null);
-
-    fetch('/api/posts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-        'Accept': 'application/json',
+    post('/posts', {
+      onSuccess: () => {
+        onPostCreated();
       },
-      body: JSON.stringify({ title, body , topic }), // Include title if needed
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((err) => {
-            throw new Error(err.message || 'Failed to create post'); // Adjusted for Laravel error format
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log('Post created:', data);
-        window.location.href = '/';
-      })
-      .catch((error) => {
-        console.error('Error creating post:', error.message);
-        setError(error.message || 'Failed to create post. Please try again.');
-      });
+      preserveState: true,
+      preserveScroll: true,
+    });
   };
 
   return (
@@ -49,9 +32,13 @@ function CreatePost() {
           border: '2px solid white',
         }}
       >
-        <h1 style={{ textAlign: 'center', marginBottom: '20px', color: 'white' }}>Create New Post</h1>
-        {error && (
-          <p style={{ color: 'red', textAlign: 'center', marginBottom: '15px' }}>{error}</p>
+        <h1 style={{ textAlign: 'center', marginBottom: '20px', color: 'white' }}>
+          Create New Post
+        </h1>
+        {Object.keys(errors).length > 0 && (
+          <p style={{ color: 'red', textAlign: 'center', marginBottom: '15px' }}>
+            {Object.values(errors).join(', ')}
+          </p>
         )}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           <div>
@@ -60,8 +47,8 @@ function CreatePost() {
             </label>
             <input
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={data.title}
+              onChange={(e) => setData('title', e.target.value)}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -74,12 +61,35 @@ function CreatePost() {
           </div>
           <div>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: 'white' }}>
+              Add Image:
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setData('image', e.target.files[0])}
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '5px',
+                border: '1px solid #ddd',
+                fontSize: '16px',
+                color: 'white',
+              }}
+            />
+            {data.image && (
+              <p style={{ color: 'white', marginTop: '5px' }}>
+                Selected: {data.image.name}
+              </p>
+            )}
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: 'white' }}>
               Topic:
             </label>
             <input
               type="text"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+              value={data.topic}
+              onChange={(e) => setData('topic', e.target.value)}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -95,8 +105,8 @@ function CreatePost() {
               Body:
             </label>
             <textarea
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
+              value={data.body}
+              onChange={(e) => setData('body', e.target.value)}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -108,21 +118,21 @@ function CreatePost() {
               required
             />
           </div>
-          
           <button
             type="submit"
+            disabled={processing}
             style={{
               padding: '10px 20px',
-              background: '#007bff',
+              background: '#0084a1',
               color: '#fff',
               border: 'none',
               borderRadius: '5px',
-              cursor: 'pointer',
+              cursor: processing ? 'not-allowed' : 'pointer',
               fontSize: '16px',
               transition: 'background 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.background = '#0056b3')}
-            onMouseLeave={(e) => (e.target.style.background = '#007bff')}
+            onMouseEnter={(e) => !processing && (e.target.style.background = '#1abee2')}
+            onMouseLeave={(e) => !processing && (e.target.style.background = '#0084a1')}
           >
             Create Post
           </button>

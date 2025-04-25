@@ -20,17 +20,33 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-          'body' => 'required|string',
-          'title' => 'required|string',
-           'topic' => 'required|string'
+        // Ensure the user is authenticated
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'You must be logged in to create a post.');
+        }
 
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+            'topic' => 'nullable|string|max:100',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $post = Post::create($data);
-        
+        $postData = [
+            'title' => $validated['title'],
+            'body' => $validated['body'],
+            'topic' => $validated['topic'],
+            'user_id' => auth()->id(), // Set user_id to the authenticated user's ID
+        ];
 
-        return response()->json($post, 201);
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images', 'public');
+            $postData['image'] = $path;
+        }
+
+        Post::create($postData);
+        return $postData;
+
     }
 
     public function update(Request $request, $id)
